@@ -1,0 +1,63 @@
+﻿@model IList<WindowsServiceManager.Controllers.ServiceViewModel>
+
+@{
+    ViewBag.Title = "Управление сервисами";
+}
+
+@section scripts
+{
+    <script language="javascript">
+        jQuery(function ($) {
+            $('#services').on('click', '.startButton', function () {
+
+                $.ajax({
+                    type: "POST",
+                    url: $(this).data('request-url'),
+                    data: { serviceName: $(this).closest('tr').attr('id') },
+                    success: function (data) {
+                        $('#services').html(data);
+                    }
+                });
+            });
+
+            $('#services').on('click', '.stopButton', function () {
+
+                $.ajax({
+                    type: "POST",
+                    url: $(this).data('request-url'),
+                    data: { serviceName: $(this).closest('tr').attr('id') },
+                    success: function (data) {
+                        $('#services').html(data);
+                    }
+                });
+            });
+        });
+
+    </script>
+}
+
+<div class="row">
+
+    <div id="services">
+        <table class="table">
+            <tr id="12">
+                <th>Service Name</th>
+                <th>Status</th>
+                <th></th>
+            </tr>
+            @foreach (var service in Model)
+            {
+                <tr id="@service.ServiceName">
+                    <td><span>@service.ServiceName</span></td>
+                    <td><span>@service.Status</span></td>
+                    <td>
+                        <div class="pull-right text-nowrap">
+                            <input type="button" class="btn btn-success btn-sm startButton" data-request-url=@Url.Action("Start", "Home") value="Start" />
+                            <input type="button" class="btn btn-success btn-sm stopButton" data-request-url=@Url.Action("Stop", "Home") value="Stop" />
+                        </div>
+                    </td>
+                </tr>
+            }
+        </table>
+    </div>
+</div>
