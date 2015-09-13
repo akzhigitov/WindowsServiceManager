@@ -1,4 +1,4 @@
-﻿@model IList<WindowsServiceManager.Controllers.ServiceViewModel>
+﻿@model IList<WindowsServiceManager.Models.ServiceViewModel>
 
 @{
     ViewBag.Title = "Управление сервисами";
@@ -52,8 +52,15 @@
                     <td><span>@service.Status</span></td>
                     <td>
                         <div class="pull-right text-nowrap">
-                            <input type="button" class="btn btn-success btn-sm startButton" data-request-url=@Url.Action("Start", "Home") value="Start" />
-                            <input type="button" class="btn btn-success btn-sm stopButton" data-request-url=@Url.Action("Stop", "Home") value="Stop" />
+                            @if (service.CanStop)
+                            {
+                                <input type="button" class="btn btn-danger btn-sm stopButton" data-request-url=@Url.Action("Stop", "Home") value="Stop" />
+                            }
+                            else
+                            {
+                                <input type="button" class="btn btn-success btn-sm startButton" data-request-url=@Url.Action("Start", "Home") value="Start" />
+                            }
+
                         </div>
                     </td>
                 </tr>
