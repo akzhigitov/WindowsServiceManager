@@ -1,7 +1,7 @@
 ﻿@model IList<WindowsServiceManager.Models.ServiceViewModel>
 
 @{
-    ViewBag.Title = "Управление сервисами";
+    ViewBag.Title = "Service Manager";
 }
 
 @section scripts
@@ -15,6 +15,7 @@
                     url: $(this).data('request-url'),
                     data: { serviceName: $(this).closest('tr').attr('id') },
                     success: function (data) {
+                        console.log('hello');
                         $('#services').html(data);
                     }
                 });
@@ -27,6 +28,22 @@
                     url: $(this).data('request-url'),
                     data: { serviceName: $(this).closest('tr').attr('id') },
                     success: function (data) {
+                        console.log('hello');
+                        $('#services').html(data);
+                    }
+                });
+            });
+
+
+            $('.filterButton').on('click', function (evt) {
+                evt.preventDefault();
+
+                $.ajax({
+                    type: "POST",
+                    url: $(this).data('request-url'),
+                    data: { filter: $('#filterInput').val() },
+                    success: function (data) {
+                        console.log('hello');
                         $('#services').html(data);
                     }
                 });
@@ -35,36 +52,18 @@
 
     </script>
 }
+<div class="row">
+    <div class="col-md-4 col-md-offset-4">
+        <form class="navbar-form navbar-left" role="search">
+            <div class="form-group">
+                <input type="text" id="filterInput" class="form-control" placeholder="Filter">
+            </div>
+            <input type="submit" class="btn btn-default btn-sm filterButton" data-request-url=@Url.Action("Filter", "Home") value="Filter" />
+        </form>
+    </div>
+</div>
 
 <div class="row">
-
-    <div id="services">
-        <table class="table">
-            <tr id="12">
-                <th>Service Name</th>
-                <th>Status</th>
-                <th></th>
-            </tr>
-            @foreach (var service in Model)
-            {
-                <tr id="@service.ServiceName">
-                    <td><span>@service.ServiceName</span></td>
-                    <td><span>@service.Status</span></td>
-                    <td>
-                        <div class="pull-right text-nowrap">
-                            @if (service.CanStop)
-                            {
-                                <input type="button" class="btn btn-danger btn-sm stopButton" data-request-url=@Url.Action("Stop", "Home") value="Stop" />
-                            }
-                            else
-                            {
-                                <input type="button" class="btn btn-success btn-sm startButton" data-request-url=@Url.Action("Start", "Home") value="Start" />
-                            }
-
-                        </div>
-                    </td>
-                </tr>
-            }
-        </table>
+    <div id="services" class="col-md-6 col-md-offset-3">
     </div>
 </div>

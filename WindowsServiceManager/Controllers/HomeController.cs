@@ -12,29 +12,24 @@ namespace WindowsServiceManager.Controllers
     public class HomeController : Controller
     {
         readonly string _machineName;
-        readonly string _filter;
 
         public HomeController()
         {
             _machineName = ConfigurationManager.AppSettings["machineName"];
-            _filter = ConfigurationManager.AppSettings["filter"];
         }
 
         public ActionResult Index()
         {
             var servicesProvider = new ServicesProvider();
-            var serviceViewModels = servicesProvider.GetServices(_machineName, _filter).Select(
-                service =>
+            var serviceViewModels = servicesProvider.GetServices(_machineName, string.Empty).Select(
+                service => new ServiceViewModel
                 {
-                    return new ServiceViewModel
-                    {
-                        ServiceName = service.ServiceName,
-                        Status = service.Status.ToString(),
-                        CanStop = service.CanStop
-                    };
+                    ServiceName = service.ServiceName,
+                    Status = service.Status.ToString(),
+                    CanStop = service.CanStop
                 }).ToList();
 
-            return View(serviceViewModels);
+            return View("Index", serviceViewModels);
         }
 
         [HttpPost]
@@ -47,6 +42,21 @@ namespace WindowsServiceManager.Controllers
                 serviceController.WaitForStatus(ServiceControllerStatus.Stopped, TimeSpan.FromSeconds(10));
             }
             return View("Index");
+        }
+
+        [HttpPost]
+        public ActionResult Filter(string filter)
+        {
+            var servicesProvider = new ServicesProvider();
+            var serviceViewModels = servicesProvider.GetServices(_machineName, filter).Select(
+                service => new ServiceViewModel
+                {
+                    ServiceName = service.ServiceName,
+                    Status = service.Status.ToString(),
+                    CanStop = service.CanStop
+                }).ToList();
+
+            return PartialView("_ServicesPartial", serviceViewModels);
         }
 
         [HttpPost]
